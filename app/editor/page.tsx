@@ -82,7 +82,15 @@ export default function EditorPage() {
   ]);
 
   useEffect(() => {
-    window.localStorage.setItem(storageKey, JSON.stringify(savedFiles));
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(savedFiles));
+    } catch {
+      // Ignore storage issues in restricted environments.
+    }
   }, [savedFiles]);
 
   const handleFileChange = (fileName: string) => {
