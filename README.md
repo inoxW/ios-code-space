@@ -63,3 +63,10 @@ flowchart TB
   KT --> API
   API --> JQ
   JQ --> RT
+```
+
+## Next steps
+1. Create the Xcode project scaffold
+2. Add file browser and editor UI
+3. Implement remote execution API
+4. Add syntax highlighting and console streaming
