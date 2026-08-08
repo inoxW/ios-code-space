@@ -1,6 +1,7 @@
 "use client";
 
 export const dynamic = "force-dynamic";
+export const ssr = false;
 
 import { useCallback, useEffect, useRef, useState, memo } from "react";
 import { useProject } from "@/lib/project-context";

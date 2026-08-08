@@ -1,6 +1,7 @@
 "use client";
 
 export const dynamic = "force-dynamic";
+export const ssr = false;
 
 import Link from "next/link";
 import { useProject } from "@/lib/project-context";
