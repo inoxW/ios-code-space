@@ -1,81 +1,44 @@
 # ios-code-space
 
-A public web-based coding environment inspired by Termux.
+A clean Next.js workspace for a browser-based coding dashboard with Projects, Editor, and Console pages.
 
-## Goal
-Build a lightweight website where users can create, edit, organize, and run code from any device, including iPhone and iPad, without relying on a native iOS app.
+## Quick start
 
-## MVP
-- Project list
-- Code editor
-- File manager
-- Console/output panel
-- Run code via backend execution service
-- Basic syntax highlighting
-
-## High-level architecture
-- **Frontend**: Next.js / React
-- **Editor**: Monaco Editor or CodeMirror
-- **Console**: terminal-style output panel
-- **Backend**: Node.js API
-- **Execution**: Docker or isolated runner service
-- **Storage**: database + file storage
-
-## Mermaid diagram
-
-```mermaid
-flowchart TB
-  subgraph FE[Web Frontend]
-    PV[Projects Page]
-    EV[Editor Page]
-    CV[Console Panel]
-    FM[File Manager]
-  end
-
-  subgraph SL[Services]
-    PS[Project Service]
-    EX[Execution Service]
-    FS[File Service]
-    SH[Syntax Highlight Service]
-  end
-
-  subgraph LS[Storage]
-    DB[(Database)]
-    ST[(File Storage)]
-    TK[(Auth Token)]
-  end
-
-  subgraph BE[Backend]
-    API[API Gateway]
-    JQ[Job Queue / Runner]
-    RT[Runtime Containers / VMs]
-  end
-
-  PV --> EV
-  EV --> CV
-  EV --> FM
-  FM --> FS
-  FS --> ST
-  PS --> DB
-  EX --> API
-  EX --> CV
-  SH --> EV
-  TK --> API
-  API --> JQ
-  JQ --> RT
+```bash
+npm install
+npm run dev
 ```
 
-## Suggested stack
-- Next.js
-- React
-- TypeScript
-- Monaco Editor
-- Node.js backend
-- PostgreSQL or SQLite for metadata
-- S3-compatible storage for files
+Open http://localhost:3000.
 
-## Next steps
-1. Scaffold the web app
-2. Add editor and project UI
-3. Implement backend execution API
-4. Add authentication and persistence
+## Scripts
+
+- npm run dev: start development server
+- npm run build: create production build
+- npm run start: run production server
+- npm run lint: run lint checks
+
+## File map
+
+- .github/workflows/webpack.yml: GitHub Actions CI for lint and build on main PR/push.
+- .gitignore: ignore rules for dependencies, build artifacts, env files, and logs.
+- .vscode/settings.json: local VS Code editor preferences for this workspace.
+- LICENSE: repository license (MIT).
+- README.md: project overview, commands, and full file descriptions.
+- next-env.d.ts: Next.js generated TypeScript reference declarations.
+- next.config.js: Next.js runtime config (strict mode and security-related header setting).
+- package.json: npm metadata, scripts, dependencies, and license field.
+- postcss.config.js: PostCSS plugin wiring for Tailwind and Autoprefixer.
+- tailwind.config.js: Tailwind scan paths and theme extensions.
+- tsconfig.json: TypeScript compiler configuration for Next.js app router.
+- app/globals.css: global styles and visual base for the app.
+- app/layout.tsx: shared app layout with top navigation and metadata.
+- app/page.tsx: home page with entry cards for each feature page.
+- app/projects/page.tsx: projects list demo page.
+- app/editor/page.tsx: interactive editor-like page with file list and simulated run output.
+- app/console/page.tsx: terminal-like command simulation page.
+
+## Notes
+
+- This project uses the Next.js App Router.
+- UI is intentionally lightweight to keep iteration fast.

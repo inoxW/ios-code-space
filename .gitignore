@@ -1,9 +1,18 @@
-# Node / web
+# Dependencies
 node_modules/
+
+# Next.js build output
 .next/
 out/
+
+# TypeScript
+*.tsbuildinfo
+
+# Production bundles
 dist/
 coverage/
+
+# Environment
 .env
 .env.local
 .env.development.local
@@ -16,5 +25,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# OS
+# OS/editor
 .DS_Store
+.vscode/*.log
