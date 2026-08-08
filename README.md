@@ -1,9 +1,9 @@
 # ios-code-space
 
-A public iOS coding environment inspired by Termux.
+A public web-based coding environment inspired by Termux.
 
 ## Goal
-Build a lightweight iOS app that lets users create, edit, organize, and run code with a terminal-like workflow, while respecting iOS sandbox constraints.
+Build a lightweight website where users can create, edit, organize, and run code from any device, including iPhone and iPad, without relying on a native iOS app.
 
 ## MVP
 - Project list
@@ -14,35 +14,35 @@ Build a lightweight iOS app that lets users create, edit, organize, and run code
 - Basic syntax highlighting
 
 ## High-level architecture
-- **SwiftUI** for the UI
-- **TextKit 2 / UITextView** for editing
-- **FileManager** for local project files
-- **SQLite / CoreData** for metadata
-- **ExecutionService** for remote code execution
-- **Keychain** for tokens
+- **Frontend**: Next.js / React
+- **Editor**: Monaco Editor or CodeMirror
+- **Console**: terminal-style output panel
+- **Backend**: Node.js API
+- **Execution**: Docker or isolated runner service
+- **Storage**: database + file storage
 
 ## Mermaid diagram
 
 ```mermaid
 flowchart TB
-  subgraph IOS[iOS App]
-    PV[ProjectsView]
-    EV[EditorView]
-    CV[ConsoleView]
-    FM[FileManager]
+  subgraph FE[Web Frontend]
+    PV[Projects Page]
+    EV[Editor Page]
+    CV[Console Panel]
+    FM[File Manager]
   end
 
   subgraph SL[Services]
-    PS[ProjectService]
-    EX[ExecutionService]
-    FS[FileService]
-    SH[SyntaxHighlightService]
+    PS[Project Service]
+    EX[Execution Service]
+    FS[File Service]
+    SH[Syntax Highlight Service]
   end
 
-  subgraph LS[Local Storage]
-    SF[Sandbox Files]
-    SQ[SQLite / CoreData]
-    KT[Keychain]
+  subgraph LS[Storage]
+    DB[(Database)]
+    ST[(File Storage)]
+    TK[(Auth Token)]
   end
 
   subgraph BE[Backend]
@@ -55,18 +55,27 @@ flowchart TB
   EV --> CV
   EV --> FM
   FM --> FS
-  FS --> SF
-  PS --> SQ
+  FS --> ST
+  PS --> DB
   EX --> API
   EX --> CV
   SH --> EV
-  KT --> API
+  TK --> API
   API --> JQ
   JQ --> RT
 ```
 
+## Suggested stack
+- Next.js
+- React
+- TypeScript
+- Monaco Editor
+- Node.js backend
+- PostgreSQL or SQLite for metadata
+- S3-compatible storage for files
+
 ## Next steps
-1. Create the Xcode project scaffold
-2. Add file browser and editor UI
-3. Implement remote execution API
-4. Add syntax highlighting and console streaming
+1. Scaffold the web app
+2. Add editor and project UI
+3. Implement backend execution API
+4. Add authentication and persistence
