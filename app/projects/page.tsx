@@ -7,68 +7,79 @@ export default function ProjectsPage() {
   const { project, resetProject, renameProject } = useProject();
 
   return (
-    <main className="px-5 py-10">
-      <section className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-black/30 p-8 shadow-panel">
-        <p className="text-xs uppercase tracking-[0.35em] text-accent">projects</p>
-        <h1 className="mt-2 text-3xl font-bold text-mist">Workspace</h1>
-        <p className="mt-2 text-sm text-mist/70">
-          Stored in localStorage — no account required.
-        </p>
+    <main className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1a1a1a] via-[#242424] to-[#1a1a1a] p-6">
+      <div className="max-w-4xl w-full">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-white mb-2">Projects</h1>
+          <p className="text-gray-400">Manage your coding projects and files</p>
+        </div>
 
-        <div className="mt-8 rounded-2xl border border-white/10 bg-black/40 p-6">
-          <label className="text-xs uppercase tracking-wide text-mist/50">
-            Project name
-          </label>
-          <input
-            value={project.name}
-            onChange={(e) => renameProject(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-white/10 bg-ink px-4 py-3 text-mist outline-none focus:border-accent/50"
-          />
+        <div className="rounded-lg bg-[#2a2a2a] border border-gray-700 p-8">
+          {/* Project Name */}
+          <div className="mb-8">
+            <label className="block text-xs font-semibold text-gray-400 uppercase mb-3">
+              Project Name
+            </label>
+            <input
+              value={project.name}
+              onChange={(e) => renameProject(e.target.value)}
+              className="w-full px-4 py-3 bg-[#1a1a1a] text-white rounded-lg border border-gray-600 outline-none focus:border-blue-500 transition"
+            />
+          </div>
 
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <div>
-              <p className="text-xs text-mist/50">Files</p>
-              <p className="text-2xl font-semibold text-accent">
-                {project.files.length}
-              </p>
+          {/* Stats */}
+          <div className="grid grid-cols-2 gap-4 mb-8">
+            <div className="bg-[#1a1a1a] rounded-lg p-4 border border-gray-700">
+              <p className="text-xs text-gray-400 uppercase mb-2">Files</p>
+              <p className="text-3xl font-bold text-blue-400">{project.files.length}</p>
             </div>
-            <div>
-              <p className="text-xs text-mist/50">Updated</p>
-              <p className="text-sm text-mist">
-                {new Date(project.updatedAt).toLocaleString()}
+            <div className="bg-[#1a1a1a] rounded-lg p-4 border border-gray-700">
+              <p className="text-xs text-gray-400 uppercase mb-2">Last Updated</p>
+              <p className="text-sm text-white">
+                {new Date(project.updatedAt).toLocaleDateString()}
               </p>
             </div>
           </div>
 
-          <ul className="mt-6 space-y-2">
-            {project.files.map((f) => (
-              <li
-                key={f.id}
-                className="flex items-center justify-between rounded-xl border border-white/5 bg-black/30 px-4 py-2 text-sm"
-              >
-                <span className="font-mono text-mist">{f.name}</span>
-                <span className="text-xs text-mist/50">{f.language}</span>
-              </li>
-            ))}
-          </ul>
+          {/* Files List */}
+          <div className="mb-8">
+            <p className="text-xs font-semibold text-gray-400 uppercase mb-4">Files</p>
+            <div className="space-y-2">
+              {project.files.map((f) => (
+                <div
+                  key={f.id}
+                  className="flex items-center justify-between bg-[#1a1a1a] rounded-lg p-4 border border-gray-700"
+                >
+                  <div>
+                    <p className="font-mono text-white">{f.name}</p>
+                    <p className="text-xs text-gray-400">{f.language}</p>
+                  </div>
+                  <span className="text-xs bg-gray-700 px-3 py-1 rounded text-gray-200">
+                    {f.language}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
 
-          <div className="mt-6 flex flex-wrap gap-3">
+          {/* Actions */}
+          <div className="flex gap-3 flex-wrap">
             <Link
               href="/editor"
-              className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-ink"
+              className="px-6 py-3 bg-gradient-to-r from-orange-400 to-red-500 text-white font-semibold rounded-lg hover:opacity-90 transition"
             >
-              Open in editor
+              Open in Editor
             </Link>
             <button
               type="button"
               onClick={resetProject}
-              className="rounded-xl border border-ember/40 px-4 py-2 text-sm text-ember hover:bg-ember/10"
+              className="px-6 py-3 bg-[#1a1a1a] text-red-400 font-semibold rounded-lg border border-red-500/30 hover:bg-red-500/10 transition"
             >
-              Reset demo files
+              Reset Files
             </button>
           </div>
         </div>
-      </section>
+      </div>
     </main>
   );
 }

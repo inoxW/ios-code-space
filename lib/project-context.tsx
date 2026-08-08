@@ -35,37 +35,39 @@ const ProjectContext = createContext<Ctx | null>(null);
 
 export function ProjectProvider({ children }: { children: ReactNode }) {
     const [project, setProject] = useState<Project>(defaultProject);
-    const [terminal, setTerminal] = useState<string[]>([
-        "code-space ready",
-        "type help in Console or press Run in Editor",
-    ]);
+    const [terminal, setTerminal] = useState<string[]>([]);
     const [hydrated, setHydrated] = useState(false);
 
+    // Load from localStorage once on mount
     useEffect(() => {
         setProject(loadProject());
-        const lines = loadTerminalLines();
-        if (lines.length) setTerminal(lines);
+        setTerminal(loadTerminalLines());
         setHydrated(true);
     }, []);
 
+    // Save project (debounced)
     useEffect(() => {
         if (!hydrated) return;
-        saveProject(project);
+        const timeout = setTimeout(() => saveProject(project), 300);
+        return () => clearTimeout(timeout);
     }, [project, hydrated]);
 
+    // Save terminal (less frequently)
     useEffect(() => {
         if (!hydrated) return;
-        saveTerminalLines(terminal);
+        const timeout = setTimeout(() => saveTerminalLines(terminal), 500);
+        return () => clearTimeout(timeout);
     }, [terminal, hydrated]);
 
     const setActiveFileId = useCallback((id: string) => {
-        setProject((p) => ({ ...p, activeFileId: id }));
+        setProject((p) => (p.activeFileId === id ? p : { ...p, activeFileId: id }));
     }, []);
 
     const updateFileContent = useCallback((id: string, content: string) => {
         setProject((p) => ({
             ...p,
-            files: p.files.map((f) => (f.id === id ? { ...f, content } : f)),
+            files: p.files.map((f) => (f.id === id && f.content !== content ? { ...f, content } : f)),
+            updatedAt: Date.now(),
         }));
     }, []);
 
@@ -82,33 +84,31 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         setProject((p) => {
             const files = p.files.filter((f) => f.id !== id);
             if (!files.length) return p;
-            const activeFileId =
-                p.activeFileId === id ? files[0].id : p.activeFileId;
+            const activeFileId = p.activeFileId === id ? files[0].id : p.activeFileId;
             return { ...p, files, activeFileId };
         });
     }, []);
 
     const appendTerminal = useCallback((line: string) => {
-        setTerminal((prev) => [...prev.slice(-300), line]);
+        setTerminal((prev) => [...prev.slice(-150), line]);
     }, []);
 
     const clearTerminal = useCallback(() => {
-        setTerminal(["code-space ready"]);
+        setTerminal([]);
     }, []);
 
     const renameProject = useCallback((name: string) => {
-        setProject((p) => ({ ...p, name }));
+        setProject((p) => (p.name === name ? p : { ...p, name }));
     }, []);
 
     const resetProject = useCallback(() => {
-        const d = defaultProject();
-        setProject(d);
-        setTerminal(["workspace reset"]);
+        setProject(defaultProject);
+        setTerminal([]);
     }, []);
 
     const activeFile = useMemo(
         () => project.files.find((f) => f.id === project.activeFileId) ?? project.files[0],
-        [project]
+        [project.files, project.activeFileId]
     );
 
     const value: Ctx = {
@@ -124,6 +124,10 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         renameProject,
         resetProject,
     };
+
+    if (!hydrated) {
+        return <>{children}</>;
+    }
 
     return (
         <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>

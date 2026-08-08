@@ -1,68 +1,76 @@
 import Link from "next/link";
 
-const cards = [
+const features = [
   {
-    title: "Editor",
-    description: "Files, Run (Pyodide Python / JS worker), Guess deps, live terminal.",
+    title: "Code Editor",
+    description: "Write Python, JavaScript, and TypeScript with syntax highlighting",
     href: "/editor",
+    icon: "📝",
   },
   {
-    title: "Console",
-    description: "Termux-style commands: help, ls, guess, run, new, clear.",
-    href: "/console",
+    title: "Run Code",
+    description: "Execute code instantly with Pyodide and Node.js runtimes",
+    href: "/editor",
+    icon: "▶",
   },
   {
-    title: "Projects",
-    description: "Workspace overview; files persist in localStorage.",
+    title: "File Management",
+    description: "Create, edit, and manage project files with localStorage persistence",
     href: "/projects",
+    icon: "📁",
   },
 ];
 
 export default function HomePage() {
   return (
-    <main className="px-5 py-10">
-      <section className="mx-auto max-w-6xl rounded-3xl border border-white/10 bg-black/30 p-8 shadow-panel">
-        <p className="text-xs uppercase tracking-[0.35em] text-accent">
-          ios-code-space
-        </p>
-        <h1 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight text-mist sm:text-5xl">
-          Code in the browser — including on iPhone &amp; iPad.
-        </h1>
-        <p className="mt-4 max-w-2xl text-base text-mist/80">
-          Next.js workspace with shared project state, dependency guessing
-          (UPM-style), command console, and in-browser Python via Pyodide.
-        </p>
-
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link
-            href="/editor"
-            className="rounded-xl bg-accent px-5 py-3 font-semibold text-ink transition hover:brightness-110"
-          >
-            Open editor
-          </Link>
-          <Link
-            href="/console"
-            className="rounded-xl border border-accent/40 px-5 py-3 font-semibold text-accent transition hover:bg-accent/10"
-          >
-            Console
-          </Link>
+    <main className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1a1a1a] via-[#242424] to-[#1a1a1a] p-6">
+      <div className="max-w-2xl w-full">
+        <div className="text-center mb-12">
+          <div className="inline-block mb-4">
+            <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg flex items-center justify-center text-3xl font-bold">
+              ▶
+            </div>
+          </div>
+          <h1 className="text-5xl font-bold text-white mb-4">Replit</h1>
+          <p className="text-xl text-gray-400 mb-2">Browser-based IDE</p>
+          <p className="text-gray-500">Code in Python, JavaScript, and TypeScript</p>
         </div>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
-          {cards.map((card) => (
+        <div className="grid gap-4 mb-8">
+          {features.map((feature) => (
             <Link
-              key={card.href}
-              href={card.href}
-              className="rounded-2xl border border-white/10 bg-black/40 p-6 transition hover:border-accent/40"
+              key={feature.href}
+              href={feature.href}
+              className="block p-6 rounded-lg bg-[#2a2a2a] hover:bg-[#333333] border border-gray-700 hover:border-gray-600 transition group"
             >
-              <h2 className="text-lg font-semibold text-mist">{card.title}</h2>
-              <p className="mt-3 text-sm leading-6 text-mist/70">
-                {card.description}
-              </p>
+              <div className="flex items-start gap-4">
+                <div className="text-3xl flex-shrink-0">{feature.icon}</div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white group-hover:text-blue-400 transition">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-400 text-sm mt-1">{feature.description}</p>
+                </div>
+              </div>
             </Link>
           ))}
         </div>
-      </section>
+
+        <div className="flex gap-3 justify-center">
+          <Link
+            href="/editor"
+            className="px-6 py-3 bg-gradient-to-r from-orange-400 to-red-500 text-white font-semibold rounded-lg hover:opacity-90 transition"
+          >
+            Open Editor
+          </Link>
+          <Link
+            href="/projects"
+            className="px-6 py-3 bg-[#2a2a2a] text-white font-semibold rounded-lg border border-gray-700 hover:bg-[#333333] transition"
+          >
+            My Projects
+          </Link>
+        </div>
+      </div>
     </main>
   );
 }

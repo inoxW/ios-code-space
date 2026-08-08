@@ -13,10 +13,11 @@
 html,
 body {
   margin: 0;
-  min-height: 100%;
-  background: radial-gradient(circle at 10% 10%, #14233b 0%, #0b0f19 45%, #06080f 100%);
-  color: #e6ecf5;
-  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  min-height: 100vh;
+  height: 100%;
+  background: #1a1a1a;
+  color: #e0e0e0;
+  font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
 }
 
 a {
@@ -25,6 +26,59 @@ a {
 }
 
 ::selection {
-  background: rgba(53, 195, 143, 0.35);
+  background: rgba(58, 134, 255, 0.3);
   color: #ffffff;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.resizable-container {
+  display: flex;
+  overflow: hidden;
+}
+
+.resizer {
+  background: #2a2a2a;
+  cursor: col-resize;
+  width: 4px;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.resizer:hover {
+  background: #3a86ff;
+}
+
+.horizontal-resizer {
+  background: #2a2a2a;
+  cursor: row-resize;
+  height: 4px;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.horizontal-resizer:hover {
+  background: #3a86ff;
+}
+
+.file-tab {
+  padding: 8px 12px;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-tab.active {
+  border-bottom-color: #3a86ff;
+  color: #3a86ff;
+}
+
+.file-tab:hover {
+  background: #2a2a2a;
 }

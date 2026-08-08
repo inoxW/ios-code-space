@@ -4,19 +4,9 @@ import { ProjectProvider } from "@/lib/project-context";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Code Space",
-  description:
-    "Browser coding workspace — editor, console, Pyodide Python, dependency guess.",
+  title: "Replit - Code Space",
+  description: "Browser coding workspace — editor, console, Python, dependency guess.",
 };
-
-const links = [
-  { href: "/", label: "Home" },
-  { href: "/editor", label: "Editor" },
-  { href: "/console", label: "Terminal" },
-  { href: "/ai", label: "AI" },
-  { href: "/plugins", label: "Plugins" },
-  { href: "/projects", label: "Projects" },
-];
 
 export default function RootLayout({
   children,
@@ -25,30 +15,40 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="uk">
-      <body>
+      <body className="flex flex-col h-screen">
         <ProjectProvider>
-          <header className="border-b border-white/10 bg-black/30 backdrop-blur">
-            <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-4">
+          <header className="border-b border-white/10 bg-[#1e1e1e] h-14 flex items-center px-4 gap-4">
+            <Link
+              href="/"
+              className="font-bold text-base tracking-tight text-white flex items-center gap-2"
+            >
+              <div className="w-6 h-6 bg-gradient-to-br from-orange-400 to-red-500 rounded"></div>
+              Replit
+            </Link>
+            <div className="flex-1 flex gap-2">
               <Link
                 href="/"
-                className="text-lg font-semibold tracking-wide text-accent"
+                className="text-xs text-gray-400 hover:text-white transition px-2 py-1"
               >
-                Code Space
+                Home
               </Link>
-              <nav className="flex flex-wrap gap-2">
-                {links.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="rounded-full border border-white/10 px-3 py-1.5 text-sm text-mist hover:border-accent/60"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </nav>
+              <Link
+                href="/editor"
+                className="text-xs text-gray-400 hover:text-white transition px-2 py-1"
+              >
+                Editor
+              </Link>
+              <Link
+                href="/projects"
+                className="text-xs text-gray-400 hover:text-white transition px-2 py-1"
+              >
+                Projects
+              </Link>
             </div>
           </header>
-          {children}
+          <div className="flex-1 overflow-hidden">
+            {children}
+          </div>
         </ProjectProvider>
       </body>
     </html>
