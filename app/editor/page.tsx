@@ -6,6 +6,7 @@ import { guessFromFiles } from "@/lib/deps/guess";
 import { PYODIDE_FRIENDLY } from "@/lib/deps/map";
 import { getPyodideRunner } from "@/lib/runner/pyodide-runner";
 import { runJavaScript } from "@/lib/runner/js-runner";
+import { runTypeScript } from "@/lib/runner/ts-runner";
 
 export default function EditorPage() {
   const {
@@ -22,6 +23,7 @@ export default function EditorPage() {
 
   const [busy, setBusy] = useState(false);
   const [newName, setNewName] = useState("script.py");
+  const [stdin, setStdin] = useState("");
 
   useEffect(() => {
     // preload Pyodide in background
@@ -48,13 +50,19 @@ export default function EditorPage() {
           onStderr: (t) => appendTerminal(`[err] ${t}`),
           onStatus: (t) => appendTerminal(`[pyodide] ${t}`),
           packages,
+          stdin,
         });
         appendTerminal(ok ? "✓ done" : "✗ failed");
-      } else if (
-        activeFile.language === "javascript" ||
-        activeFile.language === "typescript"
-      ) {
+      } else if (activeFile.language === "javascript") {
         const ok = await runJavaScript(
+          activeFile.content,
+          (t) => appendTerminal(t),
+          (t) => appendTerminal(`[err] ${t}`)
+        );
+        appendTerminal(ok ? "✓ done" : "✗ failed");
+      } else if (activeFile.language === "typescript") {
+        appendTerminal(`[tsc] compiling…`);
+        const ok = await runTypeScript(
           activeFile.content,
           (t) => appendTerminal(t),
           (t) => appendTerminal(`[err] ${t}`)
@@ -131,11 +139,10 @@ export default function EditorPage() {
                   <button
                     type="button"
                     onClick={() => setActiveFileId(f.id)}
-                    className={`min-w-0 flex-1 rounded-xl border px-3 py-2 text-left text-sm ${
-                      activeFile?.id === f.id
+                    className={`min-w-0 flex-1 rounded-xl border px-3 py-2 text-left text-sm ${activeFile?.id === f.id
                         ? "border-accent/40 bg-accent/10 text-accent"
                         : "border-transparent text-mist/80 hover:bg-white/5"
-                    }`}
+                      }`}
                   >
                     <div className="truncate font-medium">{f.name}</div>
                     <div className="text-xs opacity-60">{f.language}</div>

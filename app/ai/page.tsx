@@ -12,17 +12,39 @@ type Provider = {
     id: string;
     name: string;
     badge: string;
+    noKey: boolean;
     defaultModel: string;
-    keyHint: string;
-    keyLink: string;
+    keyHint?: string;
+    keyLink?: string;
     models: string[];
 };
 
 const PROVIDERS: Provider[] = [
     {
+        id: "pollinations",
+        name: "Pollinations.ai",
+        badge: "Без ключа ✓",
+        noKey: true,
+        defaultModel: "openai",
+        models: ["openai", "mistral", "claude", "llama"],
+    },
+    {
+        id: "huggingface",
+        name: "HuggingFace",
+        badge: "Без ключа ✓",
+        noKey: true,
+        defaultModel: "mistralai/Mistral-7B-Instruct-v0.3",
+        models: [
+            "mistralai/Mistral-7B-Instruct-v0.3",
+            "microsoft/Phi-3.5-mini-instruct",
+            "Qwen/Qwen2.5-Coder-7B-Instruct",
+        ],
+    },
+    {
         id: "groq",
         name: "Groq",
         badge: "Безплатно",
+        noKey: false,
         defaultModel: "llama-3.3-70b-versatile",
         keyHint: "gsk_…",
         keyLink: "https://console.groq.com/keys",
@@ -32,6 +54,7 @@ const PROVIDERS: Provider[] = [
         id: "gemini",
         name: "Google Gemini",
         badge: "Безплатно",
+        noKey: false,
         defaultModel: "gemini-2.0-flash-lite",
         keyHint: "AIza…",
         keyLink: "https://aistudio.google.com/apikey",
@@ -41,6 +64,7 @@ const PROVIDERS: Provider[] = [
         id: "openrouter",
         name: "OpenRouter",
         badge: "Безплатні моделі",
+        noKey: false,
         defaultModel: "meta-llama/llama-3.1-8b-instruct:free",
         keyHint: "sk-or-…",
         keyLink: "https://openrouter.ai/keys",
@@ -54,6 +78,7 @@ const PROVIDERS: Provider[] = [
         id: "openai",
         name: "OpenAI",
         badge: "Платно",
+        noKey: false,
         defaultModel: "gpt-4o-mini",
         keyHint: "sk-…",
         keyLink: "https://platform.openai.com/api-keys",
@@ -242,15 +267,15 @@ export default function AIPage() {
                                         type="button"
                                         onClick={() => switchProvider(p.id)}
                                         className={`rounded-xl border px-4 py-3 text-left transition ${providerId === p.id
-                                                ? "border-accent/60 bg-accent/10"
-                                                : "border-white/10 bg-black/20 hover:border-white/20"
+                                            ? "border-accent/60 bg-accent/10"
+                                            : "border-white/10 bg-black/20 hover:border-white/20"
                                             }`}
                                     >
                                         <div className="flex items-center justify-between">
                                             <span className="font-medium text-mist text-sm">{p.name}</span>
                                             <span className={`rounded-full px-2 py-0.5 text-xs ${p.badge === "Платно"
-                                                    ? "bg-ember/20 text-ember"
-                                                    : "bg-accent/20 text-accent"
+                                                ? "bg-ember/20 text-ember"
+                                                : "bg-accent/20 text-accent"
                                                 }`}>
                                                 {p.badge}
                                             </span>
@@ -298,8 +323,8 @@ export default function AIPage() {
                                         type="button"
                                         onClick={() => saveModel(m)}
                                         className={`rounded-lg border px-3 py-1.5 text-xs font-mono transition ${model === m
-                                                ? "border-accent/60 bg-accent/10 text-accent"
-                                                : "border-white/10 text-mist/60 hover:border-white/20"
+                                            ? "border-accent/60 bg-accent/10 text-accent"
+                                            : "border-white/10 text-mist/60 hover:border-white/20"
                                             }`}
                                     >
                                         {m}

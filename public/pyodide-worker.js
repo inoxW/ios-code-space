@@ -7,6 +7,8 @@ const INDEX_URL = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`;
 let pyodide = null;
 let loadPromise = null;
 let currentId = "";
+let stdinLines = [];
+let stdinIdx = 0;
 const installed = new Set();
 
 function post(msg) {

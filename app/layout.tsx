@@ -11,10 +11,11 @@ export const metadata: Metadata = {
 
 const links = [
   { href: "/", label: "Home" },
-  { href: "/projects", label: "Projects" },
   { href: "/editor", label: "Editor" },
-  { href: "/console", label: "Console" },
+  { href: "/console", label: "Terminal" },
   { href: "/ai", label: "AI" },
+  { href: "/plugins", label: "Plugins" },
+  { href: "/projects", label: "Projects" },
 ];
 
 export default function RootLayout({

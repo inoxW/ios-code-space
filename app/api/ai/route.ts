@@ -1,6 +1,16 @@
 import { NextResponse } from "next/server";
 
-const PROVIDERS: Record<string, { url: string; envKey: string }> = {
+const PROVIDERS: Record<string, { url: string; envKey?: string; noKey?: boolean }> = {
+    // No API key required — works out of the box
+    pollinations: {
+        url: "https://text.pollinations.ai/",
+        noKey: true,
+    },
+    huggingface: {
+        url: "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3/v1/chat/completions",
+        noKey: true, // HF allows anonymous requests (rate-limited)
+    },
+    // Free tiers — require free account key
     groq: {
         url: "https://api.groq.com/openai/v1/chat/completions",
         envKey: "GROQ_API_KEY",
@@ -51,10 +61,10 @@ export async function POST(req: Request) {
 
         // Prefer server env var for the chosen provider, fall back to client key
         const apiKey: string =
-            (process.env[providerCfg.envKey] as string | undefined) ??
+            (providerCfg.envKey ? (process.env[providerCfg.envKey] as string | undefined) : undefined) ??
             (body.apiKey as string) ?? "";
 
-        if (!apiKey) {
+        if (!providerCfg.noKey && !apiKey) {
             return NextResponse.json(
                 { error: `API key required for ${provider}. Enter it in ⚙ Налаштування.` },
                 { status: 400 }
@@ -65,12 +75,12 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "messages[] required" }, { status: 400 });
         }
 
+        const reqHeaders: Record<string, string> = { "Content-Type": "application/json" };
+        if (apiKey) reqHeaders["Authorization"] = `Bearer ${apiKey}`;
+
         const upstream = await fetch(providerCfg.url, {
             method: "POST",
-            headers: {
-                Authorization: `Bearer ${apiKey}`,
-                "Content-Type": "application/json",
-            },
+            headers: reqHeaders,
             body: JSON.stringify({
                 model,
                 messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
