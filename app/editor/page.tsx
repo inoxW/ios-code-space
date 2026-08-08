@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useCallback, useEffect, useRef, useState, memo } from "react";
 import { useProject } from "@/lib/project-context";
 import { guessFromFiles } from "@/lib/deps/guess";
@@ -16,8 +18,8 @@ const FilesList = memo(({ files, activeFileId, onSelect, onRemove }: any) => (
         key={f.id}
         onClick={() => onSelect(f.id)}
         className={`px-4 py-3 border-l-2 cursor-pointer transition ${activeFileId === f.id
-            ? "border-l-blue-500 bg-[#2a2a2a] text-blue-400"
-            : "border-l-transparent text-gray-300 hover:bg-[#2a2a2a]"
+          ? "border-l-blue-500 bg-[#2a2a2a] text-blue-400"
+          : "border-l-transparent text-gray-300 hover:bg-[#2a2a2a]"
           }`}
       >
         <div className="flex items-center justify-between">

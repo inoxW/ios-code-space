@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Offline — Replit</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: #0d0d0d;
+        color: #fff;
+        font-family: system-ui, -apple-system, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+      .container {
+        text-align: center;
+        max-width: 400px;
+      }
+      .icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+      }
+      h1 {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 12px;
+      }
+      p {
+        color: #999;
+        margin-bottom: 24px;
+        font-size: 16px;
+      }
+      button {
+        background: linear-gradient(to right, #ff9500, #ff3500);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      button:hover {
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="icon">📡</div>
+      <h1>Offline</h1>
+      <p>Перевірте своє інтернет-з'єднання</p>
+      <button onclick="location.reload()">Спробувати ще раз</button>
+    </div>
+  </body>
+</html>

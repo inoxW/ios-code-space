@@ -1,13 +1,13 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useProject } from "@/lib/project-context";
-import { executeCommand } from "@/lib/commands";
 import { guessFromFiles } from "@/lib/deps/guess";
 import { PYODIDE_FRIENDLY } from "@/lib/deps/map";
 import { getPyodideRunner } from "@/lib/runner/pyodide-runner";
 import { runJavaScript } from "@/lib/runner/js-runner";
-import { getPluginCommands } from "@/lib/plugins";
 
 type LineKind = "cmd" | "out" | "err" | "sys" | "info";
 type TermLine = { text: string; kind: LineKind };
@@ -15,25 +15,36 @@ type TermLine = { text: string; kind: LineKind };
 const HIST_KEY = "terminal:history:v1";
 
 function loadHistory(): string[] {
-    try { return JSON.parse(localStorage.getItem(HIST_KEY) ?? "[]"); }
-    catch { return []; }
+    try {
+        return JSON.parse(localStorage.getItem(HIST_KEY) ?? "[]");
+    } catch {
+        return [];
+    }
 }
+
 function saveHistory(h: string[]) {
-    try { localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(-200))); } catch { }
+    try {
+        localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(-200)));
+    } catch { }
 }
 
 function kindClass(k: LineKind) {
     switch (k) {
-        case "cmd": return "text-blue-400 font-semibold";
-        case "err": return "text-red-400";
-        case "sys": return "text-gray-500 italic";
-        case "info": return "text-gray-300";
-        default: return "text-gray-200";
+        case "cmd":
+            return "text-blue-400 font-semibold";
+        case "err":
+            return "text-red-400";
+        case "sys":
+            return "text-gray-500 italic";
+        case "info":
+            return "text-gray-300";
+        default:
+            return "text-gray-200";
     }
 }
 
 export default function ConsolePage() {
-    const { project, activeFile, terminal, appendTerminal, clearTerminal, addFile } = useProject();
+    const { project, activeFile, clearTerminal, addFile } = useProject();
     const [input, setInput] = useState("");
     const [busy, setBusy] = useState(false);
     const [lines, setLines] = useState<TermLine[]>([]);
@@ -45,93 +56,115 @@ export default function ConsolePage() {
         setLines((p) => [...p.slice(-150), { text, kind }]);
     }, []);
 
-    const execute = useCallback(async (raw: string) => {
-        const cmd = raw.trim();
-        if (!cmd) return;
+    const execute = useCallback(
+        async (raw: string) => {
+            const cmd = raw.trim();
+            if (!cmd) return;
 
-        const hist = loadHistory();
-        const newHist = [...hist.filter((h) => h !== cmd), cmd];
-        saveHistory(newHist);
-        setHistIdx(-1);
+            const hist = loadHistory();
+            const newHist = [...hist.filter((h) => h !== cmd), cmd];
+            saveHistory(newHist);
+            setHistIdx(-1);
 
-        push(`$ ${cmd}`, "cmd");
-        setBusy(true);
+            push(`$ ${cmd}`, "cmd");
+            setBusy(true);
 
-        const [name, ...rest] = cmd.split(/\s+/);
-        const args = rest.join(" ");
+            const [name, ...rest] = cmd.split(/\s+/);
+            const args = rest.join(" ");
 
-        try {
-            switch (name.toLowerCase()) {
-                case "help":
-                    push("Commands: ls | cat | run | new | guess | clear | history | echo", "info");
-                    break;
-                case "ls":
-                    project.files.forEach((f) =>
-                        push(`  ${f.name.padEnd(20)} ${f.language}`, "info")
-                    );
-                    break;
-                case "cat": {
-                    const f = args ? project.files.find((fi) => fi.name === args) : activeFile;
-                    if (!f) { push(`not found: ${args || "no active"}`, "err"); break; }
-                    push(`--- ${f.name} ---`, "sys");
-                    f.content.split("\n").forEach((l) => push(l, "out"));
-                    break;
-                }
-                case "run":
-                    if (!activeFile) { push("no active file", "err"); break; }
-                    push(`$ run ${activeFile.name}`, "cmd");
-                    if (activeFile.language === "python") {
-                        const g = guessFromFiles([activeFile]);
-                        const packages = g.packages.filter((p) => PYODIDE_FRIENDLY.has(p));
-                        const ok = await getPyodideRunner().run(activeFile.content, {
-                            onStdout: (t) => push(t, "out"),
-                            onStderr: (t) => push(t, "err"),
-                            packages,
-                            stdin: "",
-                        });
-                        push(ok ? "✓ done" : "✗ failed", ok ? "sys" : "err");
-                    } else if (activeFile.language === "javascript" || activeFile.language === "typescript") {
-                        const ok = await runJavaScript(activeFile.content, (t) => push(t), (t) => push(t, "err"));
-                        push(ok ? "✓ done" : "✗ failed", ok ? "sys" : "err");
-                    } else {
-                        push(`cannot run: ${activeFile.language}`, "err");
+            try {
+                switch (name.toLowerCase()) {
+                    case "help":
+                        push("Commands: ls | cat | run | new | guess | clear | history | echo", "info");
+                        break;
+
+                    case "ls":
+                        project.files.forEach((f) =>
+                            push(`  ${f.name.padEnd(20)} ${f.language}`, "info")
+                        );
+                        break;
+
+                    case "cat": {
+                        const f = args ? project.files.find((fi) => fi.name === args) : activeFile;
+                        if (!f) {
+                            push(`not found: ${args || "no active"}`, "err");
+                            break;
+                        }
+                        push(`--- ${f.name} ---`, "sys");
+                        f.content.split("\n").forEach((l) => push(l, "out"));
+                        break;
                     }
-                    break;
-                case "new": {
-                    const fileName = args || `file-${Date.now()}.py`;
-                    addFile(fileName);
-                    push(`created ${fileName}`, "sys");
-                    break;
+
+                    case "run":
+                        if (!activeFile) {
+                            push("no active file", "err");
+                            break;
+                        }
+                        push(`$ run ${activeFile.name}`, "cmd");
+                        if (activeFile.language === "python") {
+                            const g = guessFromFiles([activeFile]);
+                            const packages = g.packages.filter((p) => PYODIDE_FRIENDLY.has(p));
+                            const ok = await getPyodideRunner().run(activeFile.content, {
+                                onStdout: (t) => push(t, "out"),
+                                onStderr: (t) => push(t, "err"),
+                                packages,
+                                stdin: "",
+                            });
+                            push(ok ? "✓ done" : "✗ failed", ok ? "sys" : "err");
+                        } else if (activeFile.language === "javascript" || activeFile.language === "typescript") {
+                            const ok = await runJavaScript(activeFile.content, (t) => push(t), (t) => push(t, "err"));
+                            push(ok ? "✓ done" : "✗ failed", ok ? "sys" : "err");
+                        } else {
+                            push(`cannot run: ${activeFile.language}`, "err");
+                        }
+                        break;
+
+                    case "new": {
+                        const fileName = args || `file-${Date.now()}.py`;
+                        addFile(fileName);
+                        push(`created ${fileName}`, "sys");
+                        break;
+                    }
+
+                    case "guess": {
+                        const g = guessFromFiles(project.files);
+                        if (!g.packages.length) {
+                            push("no packages", "info");
+                            break;
+                        }
+                        push(`packages: ${g.packages.join(", ")}`, "info");
+                        push(`modules: ${g.modules.join(", ")}`, "info");
+                        break;
+                    }
+
+                    case "clear":
+                        setLines([]);
+                        clearTerminal();
+                        break;
+
+                    case "history":
+                        loadHistory().forEach((h, i) => push(`  ${i + 1}  ${h}`, "info"));
+                        break;
+
+                    case "echo":
+                        push(args || "", "out");
+                        break;
+
+                    case "status":
+                        push(`project: ${project.name}`, "info");
+                        push(`files: ${project.files.length} | active: ${activeFile?.name ?? "none"}`, "info");
+                        break;
+
+                    default:
+                        push(`unknown command: ${name}`, "err");
                 }
-                case "guess": {
-                    const g = guessFromFiles(project.files);
-                    if (!g.packages.length) { push("no packages", "info"); break; }
-                    push(`packages: ${g.packages.join(", ")}`, "info");
-                    push(`modules: ${g.modules.join(", ")}`, "info");
-                    break;
-                }
-                case "clear":
-                    setLines([]);
-                    clearTerminal();
-                    break;
-                case "history":
-                    loadHistory().forEach((h, i) => push(`  ${i + 1}  ${h}`, "info"));
-                    break;
-                case "echo":
-                    push(args || "", "out");
-                    break;
-                case "status":
-                    push(`project: ${project.name}`, "info");
-                    push(`files: ${project.files.length} | active: ${activeFile?.name ?? "none"}`, "info");
-                    break;
-                default:
-                    push(`unknown command: ${name}`, "err");
+            } finally {
+                setBusy(false);
+                setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "auto" }), 0);
             }
-        } finally {
-            setBusy(false);
-            setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "auto" }), 0);
-        }
-    }, [project, activeFile, push, clearTerminal, addFile]);
+        },
+        [project, activeFile, push, clearTerminal, addFile]
+    );
 
     const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
@@ -172,8 +205,8 @@ export default function ConsolePage() {
                     {activeFile && <p className="text-sm font-medium text-white truncate">{activeFile.name}</p>}
                 </div>
                 <div className="flex items-center gap-2 text-xs flex-shrink-0">
-                    <span className={`font-semibold ${busy ? 'text-yellow-500' : 'text-green-500'}`}>
-                        {busy ? '● Running' : '● Ready'}
+                    <span className={`font-semibold ${busy ? "text-yellow-500" : "text-green-500"}`}>
+                        {busy ? "● Running" : "● Ready"}
                     </span>
                 </div>
             </div>
@@ -208,58 +241,18 @@ export default function ConsolePage() {
                     />
                     <button
                         type="button"
-                        onClick={() => { execute(input); setInput(""); }}
+                        onClick={() => {
+                            execute(input);
+                            setInput("");
+                        }}
                         disabled={busy}
                         className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-sm font-semibold rounded hover:opacity-90 disabled:opacity-50 transition"
                     >
                         {busy ? "…" : "▶"}
                     </button>
                 </div>
-                <p className="text-xs text-gray-600 mt-2">
-                    Ctrl+L clear • ↑↓ history
-                </p>
+                <p className="text-xs text-gray-600 mt-2">Ctrl+L clear • ↑↓ history</p>
             </div>
         </main>
-    );
-}
-<textarea
-    value={stdin}
-    onChange={(e) => setStdin(e.target.value)}
-    rows={2}
-    placeholder="value1\nvalue2\nvalue3"
-    spellCheck={false}
-    className="mt-2 w-full px-3 py-2 bg-[#252525] text-gray-200 text-xs rounded border border-gray-700 outline-none focus:border-blue-500 resize-none"
-/>
-                </details >
-
-    {/* Input Row */ }
-    < div className = "flex gap-2" >
-                    <span className="text-blue-400 font-bold px-1 py-1">$</span>
-                    <input
-                        ref={inputRef}
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={onKeyDown}
-                        disabled={busy}
-                        autoFocus
-                        spellCheck={false}
-                        placeholder="Type a command..."
-                        className="flex-1 px-3 py-2 bg-[#252525] text-white text-sm font-mono rounded border border-gray-700 outline-none focus:border-blue-500 disabled:opacity-50"
-                    />
-                    <button
-                        type="button"
-                        onClick={() => { execute(input); setInput(""); }}
-                        disabled={busy}
-                        className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-sm font-semibold rounded hover:opacity-90 disabled:opacity-50 transition"
-                    >
-                        {busy ? "…" : "▶"}
-                    </button>
-                </div >
-
-    <p className="text-xs text-gray-600">
-        Commands: help | ls | cat file | run | new name | guess | clear | history
-    </p>
-            </div >
-        </main >
     );
 }
