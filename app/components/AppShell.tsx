@@ -44,7 +44,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main>{children}</main>
+      <div>{children}</div>
     </div>
   );
 }
