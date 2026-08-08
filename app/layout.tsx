@@ -14,6 +14,7 @@ const links = [
   { href: "/projects", label: "Projects" },
   { href: "/editor", label: "Editor" },
   { href: "/console", label: "Console" },
+  { href: "/ai", label: "AI" },
 ];
 
 export default function RootLayout({
