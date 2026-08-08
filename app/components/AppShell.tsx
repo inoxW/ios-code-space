@@ -17,9 +17,9 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
       <header className="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <Link href="/" className="text-lg font-semibold tracking-tight">
-            ios-code-space
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-4">
+          <Link href="/" className="text-lg font-semibold tracking-tight text-emerald-400">
+            Termux Online Studio
           </Link>
 
           <nav className="flex flex-wrap gap-2">
