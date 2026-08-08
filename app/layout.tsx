@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ios-code-space",
-  description: "Web-based coding workspace for iPhone, iPad, and desktop",
+  title: "Termux Online Studio",
+  description: "A futuristic coding workspace with editor, terminal, projects, and built-in AI.",
 };
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="uk">
-      <body>{children}</body>
+      <body className="bg-zinc-950 text-zinc-100">{children}</body>
     </html>
   );
 }
